@@ -47,7 +47,7 @@ export default function AddressesPage() {
   return (
     <div className="m-6">
       <h2 className="text-xl font-bold mb-4">Student Addresses</h2>
-     
+     <div className="max-w-md flex flex-col gap-3">
       <form onSubmit={handleSubmit} className="space-y-2 mb-6">
          <div className='max-w-md flex flex-col gap-3'>
         <select
@@ -70,6 +70,7 @@ export default function AddressesPage() {
         <button type="submit" className="bg-yellow-600 text-white px-4 py-2">Add Address</button>
         </div>
       </form>
+      </div>
     
 
       <ul className="list-disc pl-5">

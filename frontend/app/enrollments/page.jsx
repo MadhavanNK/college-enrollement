@@ -41,6 +41,7 @@ export default function EnrollmentsPage() {
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Enrollments</h2>
+      <div className="max-w-md flex flex-col gap-3">
       <form onSubmit={handleSubmit} className="space-y-2 mb-6">
         <select name="student" value={formData.student} onChange={handleChange} className="border px-2 py-1 w-full">
           <option value="">Select Student</option>
@@ -57,6 +58,7 @@ export default function EnrollmentsPage() {
         <input name="enrollment_date" type="date" value={formData.enrollment_date} onChange={handleChange} className="border px-2 py-1 w-full" />
         <button type="submit" className="bg-indigo-600 text-white px-4 py-2">Enroll</button>
       </form>
+      </div>
 
       <ul className="list-disc pl-5">
         {enrollments.map((e, idx) => (

@@ -25,6 +25,7 @@ export default function StudentsPage() {
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Students</h2>
+      <div className="max-w-md flex flex-col gap-3">
       <form onSubmit={handleSubmit} className="space-y-2 mb-6">
         <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="border px-2 py-1 w-full" />
         <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" className="border px-2 py-1 w-full" />
@@ -32,6 +33,7 @@ export default function StudentsPage() {
         <input name="dob" type="date" value={formData.dob} onChange={handleChange} className="border px-2 py-1 w-full" />
         <button type="submit" className="bg-blue-600 text-white px-4 py-2">Add</button>
       </form>
+      </div>
 
       <ul className="list-disc pl-5">
         {students.map((s) => <li key={s.student_id}>{s.name} - {s.email}</li>)}

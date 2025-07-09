@@ -19,15 +19,14 @@ class InstructorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CourseSerializer(serializers.ModelSerializer):
-    instructor = InstructorSerializer(read_only=True)
-
     class Meta:
         model = Course
         fields = '__all__'
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    student = StudentSerializer(read_only=True)
-    course = CourseSerializer(read_only=True)
+    class Meta:
+        model = Enrollment
+        fields = '__all__'
 
     class Meta:
         model = Enrollment
