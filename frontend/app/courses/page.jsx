@@ -1,7 +1,8 @@
 
 'use client';
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import { fetchCourses, createCourse } from "../../utils/api";
+
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState([]);
@@ -10,52 +11,51 @@ export default function CoursesPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchCourses();
-    fetchInstructors();
-  }, []);
-
-  const fetchCourses = async () => {
-    try {
-      const res = await api.get("courses/");
-      setCourses(res.data);
-    } catch (err) {
-      console.error("Failed to load courses", err);
-    }
-  };
-
-  const fetchInstructors = async () => {
-    try {
-      const res = await api.get("instructors/");
-      setInstructors(res.data);
-    } catch (err) {
-      console.error("Failed to load instructors", err);
-    }
-  };
+  loadCourses();
+  fetchInstructors(); 
+}, []);
 
   const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+const loadCourses = async () => {
+  const res = await fetchCourses(); 
+  setCourses(res.data);
+};
 
-    if (!formData.course_name || !formData.instructor) {
-      setError("Course name and instructor are required.");
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    try {
-      await api.post("courses/", {
-        course_name: formData.course_name,
-        instructor: parseInt(formData.instructor), // Convert to integer
-      });
-      setFormData({ course_name: "", instructor: "" });
-      fetchCourses();
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong while creating the course.");
-    }
-  };
+  if (!formData.course_name || !formData.instructor) {
+    setError("Course name and instructor are required.");
+    return;
+  }
+
+  try {
+    await createCourse({
+      course_name: formData.course_name,
+      instructor: parseInt(formData.instructor),
+    }); 
+    setFormData({ course_name: "", instructor: "" });
+    loadCourses();
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong while creating the course.");
+  }
+};
+
+const fetchInstructors = async () => {
+  try {
+    const res = await fetch('http://localhost:8000/api/instructors/'); 
+    const data = await res.json();
+    setInstructors(data);
+     console.log("Instructors:", data);
+  } catch (err) {
+    console.error("Failed to load instructors", err);
+  }
+};
+
 
   return (
     <div className="p-6">

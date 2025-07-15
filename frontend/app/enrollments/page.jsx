@@ -1,42 +1,68 @@
 'use client';
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import { fetchEnrollments, createEnrollment } from "../../utils/api";
+
+
+
 
 export default function EnrollmentsPage() {
   const [enrollments, setEnrollments] = useState([]);
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
   const [formData, setFormData] = useState({ student: "", course: "", enrollment_date: "" });
+   const [error, setError] = useState("")
+
 
   useEffect(() => {
-    fetchEnrollments();
-    fetchStudents();
-    fetchCourses();
-  }, []);
-
-  const fetchEnrollments = async () => {
-    const res = await api.get("enrollments/");
-    setEnrollments(res.data);
-  };
-
-  const fetchStudents = async () => {
-    const res = await api.get("students/");
-    setStudents(res.data);
-  };
-
-  const fetchCourses = async () => {
-    const res = await api.get("courses/");
-    setCourses(res.data);
-  };
+  loadEnrollments();
+  fetchStudents(); 
+  fetchCourses();  
+}, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await api.post("enrollments/", formData);
-    setFormData({ student: "", course: "", enrollment_date: "" });
-    fetchEnrollments();
+  const fetchStudents = async () => {
+  const res = await fetch('http://localhost:8000/api/students');
+  const data = await res.json();
+  setStudents(data);
+};
+
+
+const fetchCourses = async () => {
+  const res = await fetch('http://localhost:8000/api/courses');
+  const data = await res.json();
+  setCourses(data);
+};
+
+const loadEnrollments = async () => {
+  const res = await fetchEnrollments();
+  setEnrollments(res.data);
+};
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (!formData.student || !formData.course) {
+    setError("Student and Course are required.");
+    return;
+  }
+
+    try {
+      await createEnrollment({
+        student: parseInt(formData.student),
+        course: parseInt(formData.course),
+        enrollment_date: formData.enrollment_date,
+      });
+      setFormData({ student: "", course: "", enrollment_date: "" });
+      loadEnrollments();
+    } catch (err) {
+      console.error(err);
+      setError("Error creating enrollment.");
+    }
   };
+
 
   return (
     <div className="p-6">

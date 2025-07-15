@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import { fetchAddresses, createAddress } from "../../utils/api";
+
 
 export default function AddressesPage() {
   const [students, setStudents] = useState([]);
@@ -12,37 +13,49 @@ export default function AddressesPage() {
     state: "",
     pincode: "",
   });
+  const [error, setError] = useState("");
+
 
   useEffect(() => {
-    fetchStudents();
-    fetchAddresses();
+    fetch('http://localhost:8000/api/students/')
+      .then(res => res.json())
+      .then(data => setStudents(data));
   }, []);
-
-  const fetchStudents = async () => {
-    const res = await api.get("students/");
-    setStudents(res.data);
-  };
-
-  const fetchAddresses = async () => {
-    const res = await api.get("addresses/");
-    setAddresses(res.data);
-  };
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await api.post("addresses/", formData);
-    setFormData({
-      student: "",
-      street: "",
-      city: "",
-      state: "",
-      pincode: "",
+  
+  useEffect(() => {
+  loadAddresses();
+}, []);
+
+const loadAddresses = async () => {
+  const res = await fetchAddresses();
+  setAddresses(res.data);
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (!formData.student || !formData.city) {
+    setError("Student and city are required.");
+    return;
+  }
+
+  try {
+    await createAddress({
+      ...formData,
+      student: parseInt(formData.student),
     });
-    fetchAddresses();
-  };
+    setFormData({ student: "", street: "", city: "", state: "", pincode: "" });
+    loadAddresses();
+  } catch (err) {
+    console.error(err);
+    setError("Error creating address.");
+  }
+};
 
   return (
     <div className="m-6">

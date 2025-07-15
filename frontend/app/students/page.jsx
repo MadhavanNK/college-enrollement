@@ -1,26 +1,45 @@
 'use client';
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import { fetchStudents, createStudent } from "../../utils/api";
+
 
 export default function StudentsPage() {
   const [students, setStudents] = useState([]);
   const [formData, setFormData] = useState({ name: "", email: "", gender: "", dob: "" });
+  const [error, setError] = useState("")
 
-  useEffect(() => { fetchStudents(); }, []);
+    useEffect(() => {
+  loadStudents();
+}, []);
 
-  const fetchStudents = async () => {
-    const res = await api.get("students/");
-    setStudents(res.data);
-  };
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await api.post("students/", formData);
-    setFormData({ name: "", email: "", gender: "", dob: "" });
-    fetchStudents();
-  };
+
+const loadStudents = async () => {
+  const res = await fetchStudents();
+  setStudents(res.data);
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (!formData.name || !formData.email) {
+    setError("Name and Email are required.");
+    return;
+  }
+
+  try {
+    await createStudent(formData); 
+    setFormData({ name: "", email: "", gender: "", dob: "" }); 
+    loadStudents(); 
+  } catch (err) {
+    console.error(err);
+    setError("Failed to add student.");
+  }
+};
+
 
   return (
     <div className="p-6">

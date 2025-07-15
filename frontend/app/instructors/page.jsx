@@ -1,26 +1,43 @@
 'use client';
 import { useEffect, useState } from "react";
-import api from "../../utils/api";
+import { fetchInstructors, createInstructor } from "../../utils/api";
+
 
 export default function InstructorsPage() {
   const [instructors, setInstructors] = useState([]);
   const [formData, setFormData] = useState({ instructor_name: "", email: "" });
+   const [error, setError] = useState("");
 
-  useEffect(() => { fetchInstructors(); }, []);
-
-  const fetchInstructors = async () => {
-    const res = await api.get("instructors/");
-    setInstructors(res.data);
-  };
+   useEffect(() => {
+  loadInstructors();
+}, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await api.post("instructors/", formData);
+const loadInstructors = async () => {
+  const res = await fetchInstructors();
+  setInstructors(res.data);
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (!formData.instructor_name || !formData.email) {
+    setError("Name and email required.");
+    return;
+  }
+
+  try {
+    await createInstructor(formData);
     setFormData({ instructor_name: "", email: "" });
-    fetchInstructors();
-  };
+    loadInstructors();
+  } catch (err) {
+    console.error(err);
+    setError("Failed to add instructor.");
+  }
+};
+
 
   return (
     <div className="p-6">
