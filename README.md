@@ -1,14 +1,14 @@
-
-#  Student Enrollment System
+# 🎓 Student Enrollment System
 
 A full-stack web application to manage students, instructors, courses, enrollments, and student addresses.
 
 - **Backend**: Django + Django REST Framework  
-- **Frontend**: Next.js (App Router) with Axios
+- **Frontend**: Next.js (App Router) with Axios  
+- **Styling**: Tailwind CSS
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
 ```
 ├── backend/                  
@@ -22,44 +22,45 @@ A full-stack web application to manage students, instructors, courses, enrollmen
 │   │   ├── students/page.jsx
 │   │   ├── instructors/page.jsx
 │   │   ├── courses/page.jsx
-│   │   └── enrollments/page.jsx
+│   │   ├── enrollments/page.jsx
+│   │   └── student-addresses/page.jsx
 │   ├── utils/api.js         
 │   └── tailwind.config.js  
 ```
 
 ---
 
-##  Features
+## ✅ Features
 
-- Create, read, and view:
+- Create, Read (CRUD) support for:
   - Students
-  - Student addresses
+  - Student Addresses
   - Instructors
-  - Courses (linked to instructor)
+  - Courses (linked to instructors)
   - Enrollments (student + course)
-- RESTful API for each resource
-- Dynamic dropdowns for linked models (e.g., instructor select in courses)
-- Tailwind CSS-based UI
-- Axios API integration
+- RESTful API endpoints with Django DRF
+- Dynamic dropdowns in frontend (e.g., Instructor → Course)
+- Axios integration for frontend API
+- Tailwind CSS UI design
 
 ---
 
-##  Tech Stack
+## 🧱 Tech Stack
 
-| Layer       | Technology         |
-|------------|--------------------|
-| Backend     | Django, DRF        |
-| Frontend    | Next.js (App Router) |
-| Styling     | Tailwind CSS       |
-| API Calls   | Axios              |
-| DB          | SQLite (default)   |
-| CORS        | django-cors-headers|
+| Layer       | Technology          |
+|-------------|---------------------|
+| Backend     | Django + DRF        |
+| Frontend    | Next.js (App Router)|
+| Styling     | Tailwind CSS        |
+| API Client  | Axios               |
+| Database    | SQLite (default)    |
+| CORS        | django-cors-headers |
 
 ---
 
-##  Setup Instructions
+## ⚙️ Setup Instructions
 
-###  Backend (Django)
+### 🔙 Backend (Django)
 
 ```bash
 cd backend
@@ -68,24 +69,24 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-If `requirements.txt` is not present, install manually:
+If `requirements.txt` is missing:
 
 ```bash
 pip install django djangorestframework django-cors-headers
 ```
 
-Now migrate and run server:
+Now run migrations and start server:
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
-python manage.py createsuperuser 
+python manage.py createsuperuser
 python manage.py runserver
 ```
 
 ---
 
-###  Frontend (Next.js)
+### 🔜 Frontend (Next.js)
 
 ```bash
 cd frontend
@@ -93,80 +94,112 @@ npm install
 npm run dev
 ```
 
-> App runs at: `http://localhost:3000`  
+> Frontend runs at: `http://localhost:3000`  
 > Django API runs at: `http://localhost:8000`
 
 ---
 
-##  API Endpoints
+## 🔗 API Endpoints Summary
 
-| Resource    | Endpoint                   |
-|-------------|----------------------------|
-| Students    | `/api/students/`           |
-| Instructors | `/api/instructors/`        |
-| Courses     | `/api/courses/`            |
-| Enrollments | `/api/enrollments/`        |
-| Addresses   | `/api/student-addresses/`  |
-
-> Use Postman or browser to test these.
+| Resource    | Endpoint                   | Methods        |
+|-------------|----------------------------|----------------|
+| Students    | `/api/students/`           | GET, POST      |
+| Instructors | `/api/instructors/`        | GET, POST      |
+| Courses     | `/api/courses/`            | GET, POST      |
+| Enrollments | `/api/enrollments/`        | GET, POST      |
+| Addresses   | `/api/student-addresses/`  | GET, POST      |
 
 ---
 
-##  Key Files
+## 📘 API Details with Responses & cURL
 
-### Django:
-- `models.py`: All models (Student, Course, etc.)
-- `serializers.py`: Data serializers
-- `views.py`: APIView or ViewSets
-- `urls.py`: Endpoint routes
+### 📍 Students
 
-### Next.js:
-- `page.jsx`: Lists + forms for each resource
-- `utils/api.js`: Axios instance for API calls
+- **GET /api/students/**
+  - ✅ 200 OK: Returns list of students.
+  - ❌ 500 Server Error: Internal failure.
+  - 📦 cURL:
+    ```bash
+    curl http://localhost:8000/api/students/
+    ```
+
+- **POST /api/students/**
+  - ✅ 201 Created: New student created.
+  - ❌ 400 Bad Request: Missing fields.
+  - 📦 cURL:
+    ```bash
+    curl -X POST http://localhost:8000/api/students/       -H "Content-Type: application/json"       -d '{"name": "John Doe", "email": "john@example.com"}'
+    ```
+
+### 📍 Student Addresses
+
+- **GET /api/student-addresses/**
+  - ✅ 200 OK: Returns list of addresses.
+  - ❌ 500 Server Error: Internal failure.
+  - 📦 cURL:
+    ```bash
+    curl http://localhost:8000/api/student-addresses/
+    ```
+
+- **POST /api/student-addresses/**
+  - ✅ 201 Created: New address added.
+  - ❌ 400 Bad Request: Validation failed.
+  - 📦 cURL:
+    ```bash
+    curl -X POST http://localhost:8000/api/student-addresses/       -H "Content-Type: application/json"       -d '{"student": 1, "street": "123 Lane", "city": "Chennai", "state": "TN", "pincode": "600001"}'
+    ```
+
+### 📍 Instructors
+
+- **GET /api/instructors/**
+  - ✅ 200 OK: Returns list of instructors.
+  - 📦 cURL:
+    ```bash
+    curl http://localhost:8000/api/instructors/
+    ```
+
+- **POST /api/instructors/**
+  - ✅ 201 Created: Instructor created.
+  - ❌ 400 Bad Request
+  - 📦 cURL:
+    ```bash
+    curl -X POST http://localhost:8000/api/instructors/       -H "Content-Type: application/json"       -d '{"instructor_name": "Dr. Smith"}'
+    ```
+
+### 📍 Courses
+
+- **GET /api/courses/**
+  - ✅ 200 OK: Returns list of courses.
+  - 📦 cURL:
+    ```bash
+    curl http://localhost:8000/api/courses/
+    ```
+
+- **POST /api/courses/**
+  - ✅ 201 Created: Course created.
+  - ❌ 400 Bad Request
+  - 📦 cURL:
+    ```bash
+    curl -X POST http://localhost:8000/api/courses/       -H "Content-Type: application/json"       -d '{"course_name": "Physics", "instructor": 1}'
+    ```
+
+### 📍 Enrollments
+
+- **GET /api/enrollments/**
+  - ✅ 200 OK: Returns list of enrollments.
+  - 📦 cURL:
+    ```bash
+    curl http://localhost:8000/api/enrollments/
+    ```
+
+- **POST /api/enrollments/**
+  - ✅ 201 Created: Enrollment created.
+  - ❌ 400 Bad Request
+  - 📦 cURL:
+    ```bash
+    curl -X POST http://localhost:8000/api/enrollments/       -H "Content-Type: application/json"       -d '{"student": 1, "course": 1}'
+    ```
 
 ---
 
-##  CORS Setup
-
-Ensure this in Django `settings.py`:
-
-```python
-INSTALLED_APPS = [
-    ...
-    'corsheaders',
-    'rest_framework',
-    ...
-]
-
-MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    ...
-]
-
-CORS_ALLOW_ALL_ORIGINS = True  
-```
-
----
-
-##  Screenshots (Optional)
-
-Include images of the frontend pages if you like:
-```
-- Student form + list
-- Course creation dropdown with instructor
-- Admin panel
-```
-
----
-
-##  To Do / Improvements
-
--  Create forms and fetch lists
--  Add update/delete functionality
--  Add search/filter
--  Add pagination
--  Export data as CSV or PDF
--  Deploy (Netlify + Railway or Vercel + Render)
-
----
 
